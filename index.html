@@ -585,8 +585,7 @@
 <script>
 function checkPwd(){
   var p=document.getElementById('pwd').value;
-  // simple hash check
-  if(hashCode(p)===1688189){
+  if(p===atob('NzIzNQ==')){
     document.getElementById('login-screen').style.display='none';
     document.getElementById('main-content').style.display='block';
     sessionStorage.setItem('robbin_auth','1');
@@ -596,7 +595,6 @@ function checkPwd(){
     document.getElementById('pwd').focus();
   }
 }
-function hashCode(s){var h=0;for(var i=0;i<s.length;i++){h=((h<<5)-h)+s.charCodeAt(i);h|=0;}return h;}
 document.getElementById('pwd').addEventListener('keydown',function(e){if(e.key==='Enter')checkPwd();});
 if(sessionStorage.getItem('robbin_auth')==='1'){document.getElementById('login-screen').style.display='none';document.getElementById('main-content').style.display='block';}
 </script>

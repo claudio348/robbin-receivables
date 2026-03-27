@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow, noarchive, nosnippet">
+<title>Robbin — Podemos / Não Podemos</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600;9..40,700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#0a0f1a;--surface:#111827;--s2:#1a2236;--border:#1e293b;--text:#e2e8f0;--muted:#94a3b8;--green:#10b981;--green-d:rgba(16,185,129,.12);--red:#ef4444;--red-d:rgba(239,68,68,.12);--amber:#f59e0b;--amber-d:rgba(245,158,11,.12);--blue:#3b82f6;--blue-d:rgba(59,130,246,.12);--purple:#8b5cf6;--purple-d:rgba(139,92,246,.12);--rg:#2d9c6f}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100vh}
+.noise{position:fixed;inset:0;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");pointer-events:none;z-index:0}
+#login-screen{position:fixed;inset:0;z-index:1000;background:var(--bg);display:flex;align-items:center;justify-content:center}
+.login-box{background:var(--surface);border:1px solid var(--border);border-radius:20px;padding:48px 40px;width:380px;max-width:90vw;text-align:center}
+.login-box .lm{width:52px;height:52px;background:var(--rg);border-radius:14px;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:22px;color:#fff;margin:0 auto 20px}
+.login-box h2{font-size:20px;font-weight:700;margin-bottom:6px}
+.login-box .ls{font-size:14px;color:var(--muted);margin-bottom:28px}
+.login-box input{width:100%;padding:14px 18px;background:var(--s2);border:1px solid var(--border);border-radius:12px;color:var(--text);font-family:'JetBrains Mono',monospace;font-size:16px;text-align:center;letter-spacing:.3em;outline:none}
+.login-box input:focus{border-color:var(--rg)}
+.login-box button{width:100%;margin-top:16px;padding:14px;background:var(--rg);border:none;border-radius:12px;color:#fff;font-family:'DM Sans',sans-serif;font-size:15px;font-weight:600;cursor:pointer}
+.login-box button:hover{opacity:.85}
+.login-error{margin-top:14px;font-size:13px;color:var(--red);min-height:20px}
+#main-content{display:none;position:relative;z-index:1}
+.container{max-width:960px;margin:0 auto;padding:40px 24px 64px}
+.header{text-align:center;margin-bottom:48px}
+.header .logo{display:inline-flex;align-items:center;gap:10px;margin-bottom:16px}
+.header .logo .lm{width:32px;height:32px;background:var(--rg);border-radius:8px;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:14px;color:#fff}
+.header .logo span{font-size:16px;font-weight:600;color:var(--muted)}
+.header h1{font-size:28px;font-weight:700;letter-spacing:-.03em;margin-bottom:8px;background:linear-gradient(135deg,#e2e8f0,#94a3b8);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.header p{font-size:14px;color:var(--muted);line-height:1.5;max-width:600px;margin:0 auto}
+.header .ref{display:inline-block;margin-top:12px;padding:5px 12px;background:var(--surface);border:1px solid var(--border);border-radius:16px;font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--muted)}
+.section-label{text-align:center;margin:40px 0 20px}
+.section-label span{display:inline-block;padding:5px 18px;border-radius:20px;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.08em}
+.section-label .can{background:var(--green-d);color:var(--green)}
+.section-label .cannot{background:var(--red-d);color:var(--red)}
+.section-label .warn{background:var(--amber-d);color:var(--amber)}
+.section-label .info{background:var(--blue-d);color:var(--blue)}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:22px 26px;margin-bottom:14px;transition:border-color .3s}
+.card:hover{border-color:#334155}
+.card-head{display:flex;align-items:center;gap:12px;margin-bottom:10px}
+.card-icon{width:34px;height:34px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0}
+.card-icon.g{background:var(--green-d)}.card-icon.r{background:var(--red-d)}.card-icon.a{background:var(--amber-d)}.card-icon.b{background:var(--blue-d)}
+.card-title{font-size:15px;font-weight:700;letter-spacing:-.01em}
+.card-clause{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--muted);opacity:.7;margin-top:2px}
+.card-body{font-size:13px;line-height:1.65;color:var(--muted)}
+.card-body strong{color:var(--text);font-weight:600}
+.tip{margin-top:10px;padding:10px 14px;border-radius:8px;font-size:12px;line-height:1.5}
+.tip.g{background:var(--green-d);border-left:3px solid var(--green);color:#a7f3d0}
+.tip.r{background:var(--red-d);border-left:3px solid var(--red);color:#fecaca}
+.tip.a{background:var(--amber-d);border-left:3px solid var(--amber);color:#fde68a}
+.tip.b{background:var(--blue-d);border-left:3px solid var(--blue);color:#bfdbfe}
+.divider{height:1px;background:var(--border);margin:32px 0}
+.footer{text-align:center;margin-top:48px;padding-top:24px;border-top:1px solid var(--border)}
+.footer p{font-size:11px;color:var(--muted);opacity:.5}
+.card,.section-label{opacity:0;transform:translateY(16px);animation:fu .4s ease forwards}
+@keyframes fu{to{opacity:1;transform:translateY(0)}}
+@media(max-width:600px){.container{padding:20px 14px 40px}.card{padding:16px}.login-box{padding:32px 20px}}
+</style>
+</head>
+<body>
+<div class="noise"></div>
+
+<div id="login-screen">
+<div class="login-box">
+<div class="lm">R</div>
+<h2>Acesso Restrito</h2>
+<p class="ls">Documento interno Robbin</p>
+<input type="password" id="pwd" placeholder="Senha" autofocus>
+<button onclick="checkPwd()">Acessar</button>
+<div class="login-error" id="login-error"></div>
+</div>
+</div>
+<script>
+function checkPwd(){var p=document.getElementById('pwd').value;if(p===atob('NzIzNQ==')){document.getElementById('login-screen').style.display='none';document.getElementById('main-content').style.display='block';sessionStorage.setItem('robbin_auth_pp','1')}else{document.getElementById('login-error').textContent='Senha incorreta';document.getElementById('pwd').value='';document.getElementById('pwd').focus()}}
+document.getElementById('pwd').addEventListener('keydown',function(e){if(e.key==='Enter')checkPwd()});
+if(sessionStorage.getItem('robbin_auth_pp')==='1'){document.getElementById('login-screen').style.display='none';document.getElementById('main-content').style.display='block'}
+</script>
+
+<div id="main-content">
+<div class="container">
+
+<div class="header">
+<div class="logo"><div class="lm">R</div><span>robbin</span></div>
+<h1>Podemos / Não Podemos</h1>
+<p>Mapa de direitos e limites da Robbin sobre os recebíveis de cartão dos clientes, com base no contrato de Cessão Fiduciária (TC_1).</p>
+<div class="ref">TC_1 · Cláusulas 7 e 8 · Res. BCB 264/22 · Arts. 684, 685, 1.361+ CC</div>
+</div>
+
+<!-- ✅ PODEMOS -->
+<div class="section-label"><span class="can">✅ O que a Robbin PODE fazer</span></div>
+
+<div class="card">
+<div class="card-head"><div class="card-icon g">🔒</div><div><div class="card-title">Bloquear recebíveis proporcionalmente ao limite</div><div class="card-clause">Cláusula 8.5</div></div></div>
+<div class="card-body">A Robbin pode bloquear a Cessão Fiduciária <strong>proporcional ao Limite de Crédito + encargos</strong>. Ou seja, se o limite é R$10k, trava ~R$10k em recebíveis, não o total.
+<div class="tip g">Isso pode ser feito no ato da concessão ou depois, a critério da Robbin.</div></div>
+</div>
+
+<div class="card">
+<div class="card-head"><div class="card-icon g">⚡</div><div><div class="card-title">Bloquear automaticamente sem avisar o cliente</div><div class="card-clause">Cláusula 8.6</div></div></div>
+<div class="card-body">A Cessão Fiduciária pode ser <strong>automaticamente bloqueada, sem prévia notificação</strong> ao cliente, apenas em razão da concessão do limite. Não precisa de autorização adicional.</div>
+</div>
+
+<div class="card">
+<div class="card-head"><div class="card-icon g">💰</div><div><div class="card-title">Executar o colateral em caso de inadimplência</div><div class="card-clause">Cláusula 8.7</div></div></div>
+<div class="card-body">Se o cliente não paga, a Robbin pode <strong>utilizar os recebíveis para quitar a dívida</strong>, adotando todas as medidas legais de compensação e execução.</div>
+</div>
+
+<div class="card">
+<div class="card-head"><div class="card-icon g">📝</div><div><div class="card-title">Agir como procuradora do cliente na registradora</div><div class="card-clause">Cláusula 8.8 · Arts. 684, 685 CC</div></div></div>
+<div class="card-body">O cliente nomeou a Robbin como <strong>procuradora irrevogável e irretratável</strong>, com plenos poderes para agir em nome dele. Isso inclui utilizar os recursos bloqueados para pagamento, <strong>sem notificação prévia</strong>.</div>
+</div>
+
+<div class="card">
+<div class="card-head"><div class="card-icon g">🔄</div><div><div class="card-title">Alterar titularidade dos recebíveis na registradora</div><div class="card-clause">Cláusula 8.10</div></div></div>
+<div class="card-body">A Robbin pode <strong>alterar a titularidade ou realizar cessão definitiva</strong> dos recebíveis no Sistema de Registro (registradora), fazendo com que o sistema reflita a titularidade da Robbin sobre os recebíveis.</div>
+</div>
+
+<div class="card">
+<div class="card-head"><div class="card-icon g">📋</div><div><div class="card-title">Registrar o Termo em entidades competentes</div><div class="card-clause">Cláusula 8.11</div></div></div>
+<div class="card-body">A Robbin pode registrar o TC_1 perante entidades competentes para <strong>assegurar eficácia perante terceiros</strong>. Ou seja, tornar a cessão oponível a outros credores do cliente.</div>
+</div>
+
+<div class="card">
+<div class="card-head"><div class="card-icon g">📞</div><div><div class="card-title">Solicitar dados e informações ao cliente</div><div class="card-clause">Cláusula 8.4</div></div></div>
+<div class="card-body">A Robbin pode solicitar ao cliente <strong>todos os dados necessários</strong> para a correta caracterização e registro dos recebíveis. O cliente concordou em fornecer prontamente.</div>
+</div>
+
+<div class="card">
+<div class="card-head"><div class="card-icon g">👤</div><div><div class="card-title">Cobrar dos sócios pessoalmente (fiança)</div><div class="card-clause">Cláusulas 7.1 a 7.6</div></div></div>
+<div class="card-body">Se os recebíveis não cobrem a dívida, a Robbin pode cobrar dos <strong>sócios como fiadores solidários</strong>. Eles renunciaram ao benefício de ordem (art. 827/828 CC). A fiança não tem limite de valor e pode ser exigida quantas vezes for necessário.</div>
+</div>
+
+<div class="card">
+<div class="card-head"><div class="card-icon g">📉</div><div><div class="card-title">Reduzir o limite de crédito sem prazo de aviso (se risco subir)</div><div class="card-clause">Cláusula 4.5.2</div></div></div>
+<div class="card-body">Se for verificada <strong>deterioração do perfil de risco</strong>, o limite pode ser reduzido sem observar o prazo de 30 dias de comunicação prévia. Comunicação pode ocorrer até o momento da redução.</div>
+</div>
+
+<div class="card">
+<div class="card-head"><div class="card-icon g">🚫</div><div><div class="card-title">Bloquear cartão, antecipar dívida e negativar</div><div class="card-clause">Cláusula 6.3</div></div></div>
+<div class="card-body">O atraso no pagamento autoriza a Robbin a: <strong>(i)</strong> bloquear ou cancelar o cartão, <strong>(ii)</strong> vencer antecipadamente obrigações futuras, <strong>(iii)</strong> inscrever o titular em órgãos de proteção ao crédito, e <strong>(iv)</strong> excutir as garantias.</div>
+</div>
+
+<!-- ❌ NÃO PODEMOS -->
+<div class="section-label"><span class="cannot">❌ O que a Robbin NÃO pode fazer</span></div>
+
+<div class="card">
+<div class="card-head"><div class="card-icon r">🚧</div><div><div class="card-title">Travar 100% dos recebíveis do cliente</div><div class="card-clause">Cláusula 8.5 · Res. CMN 4.734</div></div></div>
+<div class="card-body">O bloqueio é <strong>proporcional ao Limite + encargos</strong>. Recebíveis excedentes ficam livres para o cliente usar com outros credores. Além disso, a regulação (CMN 4.734) impede a trava total do domicílio.
+<div class="tip r">Na prática: se o cliente tem R$50k em recebíveis e o limite é R$10k, a Robbin trava apenas ~R$10k. Os outros R$40k são do cliente.</div></div>
+</div>
+
+<div class="card">
+<div class="card-head"><div class="card-icon r">📄</div><div><div class="card-title">Aceitar recebíveis não registrados em registradora</div><div class="card-clause">Cláusula 8.2</div></div></div>
+<div class="card-body">Só são aceitos recebíveis <strong>devidamente registrados em Sistemas de Registro autorizados pelo Banco Central</strong>. Recebíveis fora do sistema (informais, não registrados) não podem ser usados como garantia.</div>
+</div>
+
+<div class="card">
+<div class="card-head"><div class="card-icon r">⚖️</div><div><div class="card-title">Aceitar recebíveis com gravames de terceiros</div><div class="card-clause">Cláusula 8.1</div></div></div>
+<div class="card-body">A cessão exige recebíveis <strong>livres e desembaraçados</strong> de quaisquer ônus, gravames, restrições, encargos ou constrições judiciais/extrajudiciais. Se outro banco já tem gravame sobre os recebíveis, a Robbin não pode usá-los.</div>
+</div>
+
+<div class="card">
+<div class="card-head"><div class="card-icon r">🔧</div><div><div class="card-title">Usar recebíveis para fins diferentes da quitação de dívida</div><div class="card-clause">Cláusulas 8.1, 8.7</div></div></div>
+<div class="card-body">Os recebíveis são cedidos <strong>exclusivamente como garantia</strong> das obrigações do cliente com a Robbin. Não podem ser usados para outro fim, como empréstimos a terceiros ou investimentos próprios.</div>
+</div>
+
+<div class="card">
+<div class="card-head"><div class="card-icon r">🕐</div><div><div class="card-title">Manter a garantia após quitação total</div><div class="card-clause">Cláusula 8.9</div></div></div>
+<div class="card-body">Os poderes de procuração e a Cessão Fiduciária <strong>se extinguem quando todas as obrigações forem quitadas</strong>. A Robbin deve liberar a garantia após pagamento integral.</div>
+</div>
+
+<div class="card">
+<div class="card-head"><div class="card-icon r">📊</div><div><div class="card-title">Reduzir limite sem aviso (se não houver deterioração de risco)</div><div class="card-clause">Cláusula 4.5.2</div></div></div>
+<div class="card-body">Em condições normais (sem deterioração de risco), a redução do limite exige <strong>comunicação prévia de 30 dias</strong>. Só pode pular o prazo se houver evidência de aumento de risco.</div>
+</div>
+
+<div class="card">
+<div class="card-head"><div class="card-icon r">💳</div><div><div class="card-title">Usar recebíveis de adquirentes que travam antecipadamente</div><div class="card-clause">Política de Crédito v3 · Seção 6.4</div></div></div>
+<div class="card-body">Na prática, recebíveis de <strong>PagSeguro e SafraPay</strong> não servem como colateral confiável porque essas adquirentes costumam travar recebíveis antecipadamente. São classificados como subjetivo negativo na análise.</div>
+</div>
+
+<!-- ⚠️ PONTOS DE ATENÇÃO -->
+<div class="section-label"><span class="warn">⚠️ Pontos de atenção operacional</span></div>
+
+<div class="card">
+<div class="card-head"><div class="card-icon a">📌</div><div><div class="card-title">A cessão abrange o Grupo Econômico</div><div class="card-clause">Cláusula 8.1</div></div></div>
+<div class="card-body">A cessão cobre não só o CNPJ do USUÁRIO mas também <strong>sociedades do Grupo Econômico</strong> (empresas com administração comum e CNAEs semelhantes). Isso amplia o colateral disponível.</div>
+</div>
+
+<div class="card">
+<div class="card-head"><div class="card-icon a">🔗</div><div><div class="card-title">A operação deve ser registrada na registradora</div><div class="card-clause">Cláusula 8.3 · Res. BCB 264/22</div></div></div>
+<div class="card-body">A cessão constitui <strong>negociação de recebíveis de arranjo de pagamento</strong> conforme Resolução BCB 264/22 e deve ser registrada no Sistema de Registro. Sem registro, a cessão não tem eficácia plena perante terceiros.</div>
+</div>
+
+<div class="card">
+<div class="card-head"><div class="card-icon a">⏳</div><div><div class="card-title">Limite é recomposto em D+3 após pagamento</div><div class="card-clause">Cláusula 4.5.6</div></div></div>
+<div class="card-body">Após o pagamento da Fatura, o Limite de Crédito é <strong>recomposto automaticamente em até 3 dias úteis</strong>. Importante comunicar isso ao cliente para evitar confusão.</div>
+</div>
+
+<div class="card">
+<div class="card-head"><div class="card-icon a">📱</div><div><div class="card-title">Monitoramento tem frequência diferenciada</div><div class="card-clause">Política de Crédito v3</div></div></div>
+<div class="card-body">Clientes adimplentes: recebíveis checados <strong>1x/mês</strong>. Clientes com fatura em aberto: <strong>1x/semana</strong>. Essa diferença é importante para detectar deterioração precoce.</div>
+</div>
+
+<div class="card">
+<div class="card-head"><div class="card-icon a">🤝</div><div><div class="card-title">Renegociação tem regras rígidas</div><div class="card-clause">Pol. Crédito v3 · Seção 5.3</div></div></div>
+<div class="card-body"><strong>Renegociação padrão (D+15):</strong> até 3 parcelas, entrada mínima 35%, bloqueio de limites.<br><strong>Renegociação total (D+30):</strong> até 6 parcelas, entrada mínima 20%, mandatório run-off e limite zerado.<br>Exceções requerem alçada mínima de Crédito 1 ou Crédito 2.
+<div class="tip a">Nunca ofereça renegociação fora desses parâmetros sem aprovação da alçada adequada.</div></div>
+</div>
+
+<!-- ℹ️ CONTEXTO REGULATÓRIO -->
+<div class="section-label"><span class="info">ℹ️ Base legal e regulatória</span></div>
+
+<div class="card">
+<div class="card-head"><div class="card-icon b">📜</div><div><div class="card-title">Legislação que fundamenta a Cessão Fiduciária</div></div></div>
+<div class="card-body">
+<strong>Art. 1.361+ do Código Civil</strong> — alienação fiduciária em geral<br>
+<strong>Art. 18+ da Lei 9.514/97</strong> — alienação fiduciária de créditos<br>
+<strong>Art. 66-B da Lei 4.728/65</strong> — cessão fiduciária de direitos creditórios<br>
+<strong>Resolução BCB 264/22</strong> — registro de recebíveis de arranjo de pagamento<br>
+<strong>Resolução CMN 4.734/19</strong> — operações com recebíveis de cartão<br>
+<strong>Arts. 684, 685 CC</strong> — procuração irrevogável (mandato)<br>
+<strong>Arts. 827, 828 CC</strong> — fiança e renúncia ao benefício de ordem
+</div>
+</div>
+
+<div class="footer">
+<p>Robbin · Documento interno e confidencial · Dúvidas? Fale com Jurídico ou Crédito.</p>
+</div>
+
+</div>
+</div>
+</body>
+</html>

@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow, noarchive, nosnippet">
+<title>Robbin — Recebíveis (Operacional)</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600;9..40,700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0f1a;
+    --surface: #111827;
+    --surface-2: #1a2236;
+    --border: #1e293b;
+    --text: #e2e8f0;
+    --text-muted: #94a3b8;
+    --accent: #10b981;
+    --accent-dim: rgba(16, 185, 129, 0.12);
+    --blue: #3b82f6;
+    --blue-dim: rgba(59, 130, 246, 0.12);
+    --amber: #f59e0b;
+    --amber-dim: rgba(245, 158, 11, 0.12);
+    --red: #ef4444;
+    --red-dim: rgba(239, 68, 68, 0.12);
+    --purple: #8b5cf6;
+    --purple-dim: rgba(139, 92, 246, 0.12);
+    --cyan: #06b6d4;
+    --cyan-dim: rgba(6, 182, 212, 0.12);
+    --robbin-green: #2d9c6f;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
+
+  .noise {
+    position: fixed; inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
+    pointer-events: none; z-index: 0;
+  }
+
+  /* LOGIN */
+  #login-screen {
+    position: fixed; inset: 0; z-index: 1000; background: var(--bg);
+    display: flex; align-items: center; justify-content: center;
+  }
+  .login-box {
+    background: var(--surface); border: 1px solid var(--border); border-radius: 20px;
+    padding: 48px 40px; width: 380px; max-width: 90vw; text-align: center;
+  }
+  .login-box .lm { width: 52px; height: 52px; background: var(--robbin-green); border-radius: 14px; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 22px; color: #fff; margin: 0 auto 20px; }
+  .login-box h2 { font-size: 20px; font-weight: 700; margin-bottom: 6px; }
+  .login-box .ls { font-size: 14px; color: var(--text-muted); margin-bottom: 28px; }
+  .login-box input { width: 100%; padding: 14px 18px; background: var(--surface-2); border: 1px solid var(--border); border-radius: 12px; color: var(--text); font-family: 'JetBrains Mono', monospace; font-size: 16px; text-align: center; letter-spacing: 0.3em; outline: none; }
+  .login-box input:focus { border-color: var(--robbin-green); }
+  .login-box input::placeholder { color: #475569; letter-spacing: 0.1em; font-size: 14px; }
+  .login-box button { width: 100%; margin-top: 16px; padding: 14px; background: var(--robbin-green); border: none; border-radius: 12px; color: #fff; font-family: 'DM Sans', sans-serif; font-size: 15px; font-weight: 600; cursor: pointer; }
+  .login-box button:hover { opacity: 0.85; }
+  .login-error { margin-top: 14px; font-size: 13px; color: var(--red); min-height: 20px; }
+
+  /* MAIN */
+  #main-content { display: none; position: relative; z-index: 1; }
+  .container { max-width: 900px; margin: 0 auto; padding: 40px 24px 64px; }
+
+  /* HEADER */
+  .header { text-align: center; margin-bottom: 48px; }
+  .header .logo { display: inline-flex; align-items: center; gap: 10px; margin-bottom: 16px; }
+  .header .logo .lm { width: 32px; height: 32px; background: var(--robbin-green); border-radius: 8px; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 14px; color: #fff; }
+  .header .logo span { font-size: 16px; font-weight: 600; color: var(--text-muted); }
+  .header h1 { font-size: 26px; font-weight: 700; letter-spacing: -0.03em; margin-bottom: 8px; background: linear-gradient(135deg, #e2e8f0, #94a3b8); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+  .header p { font-size: 14px; color: var(--text-muted); line-height: 1.5; }
+  .header .badge { display: inline-block; margin-top: 12px; padding: 5px 12px; background: var(--amber-dim); border-radius: 16px; font-size: 11px; font-weight: 600; color: var(--amber); text-transform: uppercase; letter-spacing: 0.06em; }
+
+  /* STEPS */
+  .step { background: var(--surface); border: 1px solid var(--border); border-radius: 16px; padding: 24px 28px; margin-bottom: 0; }
+  .step:hover { border-color: #334155; }
+  .step-head { display: flex; align-items: center; gap: 14px; margin-bottom: 12px; }
+  .step-num { width: 36px; height: 36px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 15px; flex-shrink: 0; }
+  .step-num.green { background: var(--accent-dim); color: var(--accent); }
+  .step-num.blue { background: var(--blue-dim); color: var(--blue); }
+  .step-num.purple { background: var(--purple-dim); color: var(--purple); }
+  .step-num.cyan { background: var(--cyan-dim); color: var(--cyan); }
+  .step-num.amber { background: var(--amber-dim); color: var(--amber); }
+  .step-num.red { background: var(--red-dim); color: var(--red); }
+  .step-title { font-size: 16px; font-weight: 700; letter-spacing: -0.01em; }
+  .step-body { font-size: 14px; line-height: 1.7; color: var(--text-muted); }
+  .step-body strong { color: var(--text); font-weight: 600; }
+
+  .tip {
+    margin-top: 12px; padding: 12px 16px; border-radius: 10px;
+    font-size: 13px; line-height: 1.5;
+  }
+  .tip.green { background: var(--accent-dim); border-left: 3px solid var(--accent); color: #a7f3d0; }
+  .tip.blue { background: var(--blue-dim); border-left: 3px solid var(--blue); color: #bfdbfe; }
+  .tip.amber { background: var(--amber-dim); border-left: 3px solid var(--amber); color: #fde68a; }
+  .tip.red { background: var(--red-dim); border-left: 3px solid var(--red); color: #fecaca; }
+  .tip.purple { background: var(--purple-dim); border-left: 3px solid var(--purple); color: #ddd6fe; }
+
+  /* CONNECTOR */
+  .conn { width: 2px; height: 32px; margin: 0 auto; position: relative; }
+  .conn.g { background: rgba(16,185,129,0.2); }
+  .conn.b { background: rgba(59,130,246,0.2); }
+  .conn.n { background: var(--border); }
+  .conn.r { background: rgba(239,68,68,0.2); }
+  .conn::after { content: ''; position: absolute; bottom: -3px; left: 50%; width: 6px; height: 6px; border-right: 2px solid var(--text-muted); border-bottom: 2px solid var(--text-muted); transform: translateX(-50%) rotate(45deg); }
+
+  /* TIMELINE MINI */
+  .tl { margin-top: 12px; }
+  .tl-item { display: flex; gap: 12px; align-items: flex-start; padding: 6px 0; position: relative; }
+  .tl-item:not(:last-child)::before { content:''; position: absolute; left: 15px; top: 28px; bottom: -2px; width: 2px; background: var(--border); }
+  .tl-badge { width: 32px; height: 22px; border-radius: 5px; display: flex; align-items: center; justify-content: center; font-family: 'JetBrains Mono', monospace; font-size: 9px; font-weight: 600; flex-shrink: 0; z-index: 1; }
+  .tl-badge.g { background: var(--accent-dim); color: var(--accent); }
+  .tl-badge.a { background: var(--amber-dim); color: var(--amber); }
+  .tl-badge.r { background: var(--red-dim); color: var(--red); }
+  .tl-text { font-size: 13px; line-height: 1.4; color: var(--text-muted); }
+  .tl-text strong { color: var(--text); font-weight: 600; }
+
+  .footer { text-align: center; margin-top: 48px; padding-top: 24px; border-top: 1px solid var(--border); }
+  .footer p { font-size: 11px; color: var(--text-muted); opacity: 0.5; }
+
+  .step, .conn { opacity: 0; transform: translateY(16px); animation: fu 0.4s ease forwards; }
+  @keyframes fu { to { opacity:1; transform: translateY(0); } }
+  .container > *:nth-child(1) { animation-delay:.03s } .container > *:nth-child(2) { animation-delay:.06s }
+  .container > *:nth-child(3) { animation-delay:.09s } .container > *:nth-child(4) { animation-delay:.12s }
+  .container > *:nth-child(5) { animation-delay:.15s } .container > *:nth-child(6) { animation-delay:.18s }
+  .container > *:nth-child(7) { animation-delay:.21s } .container > *:nth-child(8) { animation-delay:.24s }
+  .container > *:nth-child(9) { animation-delay:.27s } .container > *:nth-child(10) { animation-delay:.30s }
+  .container > *:nth-child(11) { animation-delay:.33s } .container > *:nth-child(12) { animation-delay:.36s }
+  .container > *:nth-child(13) { animation-delay:.39s } .container > *:nth-child(14) { animation-delay:.42s }
+
+  @media (max-width: 600px) { .container { padding: 20px 14px 40px; } .step { padding: 18px; } .login-box { padding: 32px 20px; } }
+</style>
+</head>
+<body>
+<div class="noise"></div>
+
+<div id="login-screen">
+  <div class="login-box">
+    <div class="lm">R</div>
+    <h2>Acesso Restrito</h2>
+    <p class="ls">Documento interno Robbin</p>
+    <input type="password" id="pwd" placeholder="Senha" autofocus>
+    <button onclick="checkPwd()">Acessar</button>
+    <div class="login-error" id="login-error"></div>
+  </div>
+</div>
+
+<script>
+function checkPwd(){
+  var p=document.getElementById('pwd').value;
+  if(p===atob('NzIzNQ==')){
+    document.getElementById('login-screen').style.display='none';
+    document.getElementById('main-content').style.display='block';
+    sessionStorage.setItem('robbin_auth_jr','1');
+  } else {
+    document.getElementById('login-error').textContent='Senha incorreta';
+    document.getElementById('pwd').value='';
+    document.getElementById('pwd').focus();
+  }
+}
+document.getElementById('pwd').addEventListener('keydown',function(e){if(e.key==='Enter')checkPwd();});
+if(sessionStorage.getItem('robbin_auth_jr')==='1'){document.getElementById('login-screen').style.display='none';document.getElementById('main-content').style.display='block';}
+</script>
+
+<div id="main-content">
+<div class="container">
+
+  <div class="header">
+    <div class="logo"><div class="lm">R</div><span>robbin</span></div>
+    <h1>Como Funcionam os Recebíveis</h1>
+    <p>Guia operacional simplificado: como a Robbin usa recebíveis de cartão como garantia de crédito.</p>
+    <div class="badge">Versão Time Operacional</div>
+  </div>
+
+  <!-- 1 -->
+  <div class="step">
+    <div class="step-head">
+      <div class="step-num green">1</div>
+      <div class="step-title">Cliente aceita os Termos</div>
+    </div>
+    <div class="step-body">
+      Quando a PME se cadastra na Plataforma Robbin e aceita os Termos de Uso, ela automaticamente autoriza a Robbin a: consultar o <strong>SCR</strong> (histórico de crédito no Banco Central), acessar a <strong>agenda de recebíveis de cartão</strong> nas registradoras (CERC, Núclea, TAG), e formalizar a <strong>cessão fiduciária</strong> dos recebíveis como garantia.
+      <div class="tip green">
+        <strong>O que é a cessão fiduciária?</strong> É como se o cliente "reservasse" parte dos recebíveis de cartão dele a favor da Robbin. Se ele não pagar, a Robbin pode usar esses recebíveis para cobrir a dívida.
+      </div>
+    </div>
+  </div>
+
+  <div class="conn g"></div>
+
+  <!-- 2 -->
+  <div class="step">
+    <div class="step-head">
+      <div class="step-num blue">2</div>
+      <div class="step-title">Análise de crédito</div>
+    </div>
+    <div class="step-body">
+      O time de crédito consulta quanto o cliente tem de recebíveis disponíveis (que ele ainda não antecipou nem deu em garantia pra outro banco). Isso <strong>não é obrigatório</strong> para aprovar, mas é um ponto positivo na análise.
+      <div class="tip blue">
+        <strong>Adquirentes que ajudam:</strong> Cielo e Rede costumam ter recebíveis disponíveis (bom sinal).<br>
+        <strong>Adquirentes que complicam:</strong> PagSeguro e SafraPay costumam travar os recebíveis antecipadamente (sinal de atenção).
+      </div>
+    </div>
+  </div>
+
+  <div class="conn b"></div>
+
+  <!-- 3 -->
+  <div class="step">
+    <div class="step-head">
+      <div class="step-num purple">3</div>
+      <div class="step-title">Limite aprovado + gravame na registradora</div>
+    </div>
+    <div class="step-body">
+      Quando o limite é aprovado, a Robbin pode registrar um <strong>gravame</strong> (uma trava) nos recebíveis do cliente, proporcional ao valor do limite. Ou seja, se o limite é R$10k, a Robbin trava ~R$10k em recebíveis, não o total do cliente.
+      <div class="tip purple">
+        <strong>Importante:</strong> A Robbin pode escolher travar na hora da concessão ou travar depois, se necessário. O cliente fica livre para usar os recebíveis excedentes com outros bancos.
+      </div>
+    </div>
+  </div>
+
+  <div class="conn n"></div>
+
+  <!-- 4 -->
+  <div class="step">
+    <div class="step-head">
+      <div class="step-num cyan">4</div>
+      <div class="step-title">Monitoramento da carteira</div>
+    </div>
+    <div class="step-body">
+      Enquanto o cliente está ativo, o time monitora duas coisas: se a <strong>fatura está sendo paga em dia</strong> e se os <strong>recebíveis continuam disponíveis</strong>.
+      <div class="tip" style="background:var(--cyan-dim);border-left:3px solid var(--cyan);color:#a5f3fc;">
+        <strong>Frequência:</strong><br>
+        → Cliente em dia: recebíveis checados <strong>1x por mês</strong><br>
+        → Cliente com fatura em aberto: recebíveis checados <strong>1x por semana</strong>
+      </div>
+    </div>
+  </div>
+
+  <div class="conn n"></div>
+
+  <!-- 5 -->
+  <div class="step">
+    <div class="step-head">
+      <div class="step-num amber">5</div>
+      <div class="step-title">Se o cliente não paga: régua de cobrança</div>
+    </div>
+    <div class="step-body">
+      Quando a fatura não é paga, entra a régua de cobrança. Cada prazo tem uma ação:
+
+      <div class="tl">
+        <div class="tl-item">
+          <div class="tl-badge g">D-5</div>
+          <div class="tl-text"><strong>Lembrete</strong> antes do vencimento (email, WhatsApp, SMS)</div>
+        </div>
+        <div class="tl-item">
+          <div class="tl-badge a">D+0</div>
+          <div class="tl-text"><strong>Não pagou</strong> — início das comunicações de cobrança</div>
+        </div>
+        <div class="tl-item">
+          <div class="tl-badge a">D+5</div>
+          <div class="tl-text"><strong>Bloqueia o cartão</strong> — cliente não consegue mais comprar</div>
+        </div>
+        <div class="tl-item">
+          <div class="tl-badge a">D+15</div>
+          <div class="tl-text"><strong>Renegociação</strong> — até 3x, entrada mínima de 35%</div>
+        </div>
+        <div class="tl-item">
+          <div class="tl-badge r">D+20</div>
+          <div class="tl-text">🔴 <strong>Executa o colateral</strong> — Robbin "puxa" os recebíveis do cliente na registradora para cobrir a dívida</div>
+        </div>
+        <div class="tl-item">
+          <div class="tl-badge r">D+30</div>
+          <div class="tl-text"><strong>Cobrança com o parceiro-âncora</strong> — a marca parceira ajuda na recuperação</div>
+        </div>
+        <div class="tl-item">
+          <div class="tl-badge r">D+90</div>
+          <div class="tl-text"><strong>Cobrança externa</strong> — empresa terceirizada + negativação</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="conn r"></div>
+
+  <!-- 6 -->
+  <div class="step">
+    <div class="step-head">
+      <div class="step-num red">6</div>
+      <div class="step-title">Como a Robbin "puxa" os recebíveis (D+20)</div>
+    </div>
+    <div class="step-body">
+      No aceite dos Termos, o cliente deu à Robbin uma <strong>procuração irrevogável</strong> para agir em nome dele no sistema de registradoras. Na prática, isso significa que a Robbin pode redirecionar os recebíveis do cliente (que estavam indo pro domicílio bancário dele) para a conta da Robbin, abatendo a dívida. Tudo isso <strong>sem precisar de processo judicial</strong>.
+      <div class="tip red">
+        <strong>Resumo:</strong> Cliente não pagou → Robbin acessa a registradora → redireciona os recebíveis → abate a dívida. Se os recebíveis não bastam, a Robbin pode cobrar dos sócios pessoalmente (fiança pessoal assinada nos Termos).
+      </div>
+    </div>
+  </div>
+
+  <div class="footer">
+    <p>Robbin · Documento interno e confidencial · Dúvidas? Fale com o time de Crédito.</p>
+  </div>
+
+</div>
+</div>
+</body>
+</html>
